@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Azure.WebJobs.Host;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -28,5 +29,12 @@ namespace AzureFunctions.Tests.Common
             var httpContext = new DefaultHttpContext();
             return httpContext.Request;
         }
+
+        public TraceWriter CreateTraceWriter()
+        {
+
+            return new DiagnosticsTraceWriter();
+        }
+
     }
 }

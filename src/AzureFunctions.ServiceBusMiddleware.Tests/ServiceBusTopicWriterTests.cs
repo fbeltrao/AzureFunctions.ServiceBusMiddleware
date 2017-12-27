@@ -9,11 +9,19 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using Microsoft.Azure.WebJobs.Host;
 
 namespace AzureFunctions.ServiceBusMiddleware.Tests
 {
     public class ServiceBusTopicWriterTests : AzureFunctionTest
     {
+        private TraceWriter traceWriter;
+
+        public ServiceBusTopicWriterTests()
+        {
+            traceWriter = CreateTraceWriter();
+        }
+
         [Fact]
         public async Task RunManual_When_Empty_Properties_Sends_Messages_Without_Custom_Properties()
         {
@@ -29,7 +37,7 @@ namespace AzureFunctions.ServiceBusMiddleware.Tests
 
             var actual = await target.RunManual(
                 CreateJsonRequest(@"[{},{}]")
-                , new Mock<ILogger>().Object
+                , traceWriter
                 , topicClient.Object);
 
             Assert.IsType<OkResult>(actual);
@@ -44,7 +52,7 @@ namespace AzureFunctions.ServiceBusMiddleware.Tests
 
             var actual = await target.RunManual(
                 CreateEmptyRequest(),
-                new Mock<ILogger>().Object,
+                traceWriter,
                 new Mock<ITopicClient>().Object);
 
             Assert.IsType<BadRequestObjectResult>(actual);
@@ -67,7 +75,7 @@ namespace AzureFunctions.ServiceBusMiddleware.Tests
 
             var actual = await target.RunManual(
                 CreateJsonRequest("[{}, {}]")
-                , new Mock<ILogger>().Object
+                , traceWriter
                 , topicClient.Object);
 
             Assert.IsType<OkResult>(actual);
@@ -89,7 +97,7 @@ namespace AzureFunctions.ServiceBusMiddleware.Tests
 
             var actual = await target.RunManual(
                 CreateJsonRequest(new[] { new { test = "value1" }, new { test = "value2" } })
-                , new Mock<ILogger>().Object
+                , traceWriter
                 , topicClient.Object);
 
             Assert.IsType<OkResult>(actual);

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.ServiceBus;
 using Microsoft.Azure.WebJobs;
+using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -18,7 +19,7 @@ namespace AzureFunctions.ServiceBusMiddleware.Functions
         public IList<TopicMessageCustomProperty> Properties { get; set; }
 
 
-        public async Task<IActionResult> Run(HttpRequest req, ILogger log, IAsyncCollector<Message> outputMessages)
+        public async Task<IActionResult> Run(HttpRequest req, TraceWriter log, IAsyncCollector<Message> outputMessages)
         {
             if (this.Properties == null)
             {
@@ -49,13 +50,13 @@ namespace AzureFunctions.ServiceBusMiddleware.Functions
                 messageCount++;
             }
 
-            log.LogInformation($"Created {messageCount} messages to send to topic");
+            log.Info($"Created {messageCount} messages to send to topic");
 
             return new OkResult();
         }
 
 
-        public async Task<IActionResult> RunManual(HttpRequest req, ILogger log, ITopicClient topicClient)
+        public async Task<IActionResult> RunManual(HttpRequest req, TraceWriter log, ITopicClient topicClient)
         {
             if (topicClient == null)
             {
@@ -90,17 +91,17 @@ namespace AzureFunctions.ServiceBusMiddleware.Functions
                 outputMessages.Add(message);
             }
 
-            log.LogInformation($"Created {outputMessages.Count} messages to send to topic {topicClient.TopicName}");
+            log.Info($"Created {outputMessages.Count} messages to send to topic {topicClient.TopicName}");
 
             try
             {
                 await topicClient.SendAsync(outputMessages);
-                log.LogInformation($"Sent {outputMessages.Count} messages to topic {topicClient.TopicName}");
+                log.Info($"Sent {outputMessages.Count} messages to topic {topicClient.TopicName}");
 
             }
             catch (Exception sendException)
             {
-                log.LogError(sendException, "Error sending message to Service Bus Topic");
+                log.Error("Error sending message to Service Bus Topic", sendException);
                 return new BadRequestObjectResult("Error sending message to topic");
             }
 
