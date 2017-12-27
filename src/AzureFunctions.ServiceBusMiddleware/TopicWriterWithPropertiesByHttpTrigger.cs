@@ -17,18 +17,18 @@ namespace AzureFunctions.ServiceBusMiddleware
     /// <summary>
     /// Entry point for Topic writer with properties function
     /// </summary>
-    public static class HttpTrigger_TopicWriterWithProperties
+    public static class TopicWriterWithPropertiesByHttpTrigger
     {
         static Lazy<IList<Functions.TopicMessageCustomProperty>> TopicMessageCustomProperties = new Lazy<IList<Functions.TopicMessageCustomProperty>>(() =>
         {
-            return Functions.TopicMessageCustomProperty.Parse(Environment.GetEnvironmentVariable("HttpTrigger_TopicWriterWithProperties_Properties"));
+            return Functions.TopicMessageCustomProperty.Parse(Environment.GetEnvironmentVariable($"{nameof(TopicWriterWithPropertiesByHttpTrigger)}_Properties"));
         });
 
 
         static Lazy<ITopicClient> TopicClient = new Lazy<ITopicClient>(() =>
         {
-            var serviceBusConnectionString = Environment.GetEnvironmentVariable("HttpTrigger_TopicWriterWithProperties_Connection");
-            var topicName = Environment.GetEnvironmentVariable("HttpTrigger_TopicWriterWithProperties_Topic");
+            var serviceBusConnectionString = Environment.GetEnvironmentVariable($"{nameof(TopicWriterWithPropertiesByHttpTrigger)}_Connection");
+            var topicName = Environment.GetEnvironmentVariable($"{nameof(TopicWriterWithPropertiesByHttpTrigger)}_Topic");
             return new TopicClient(serviceBusConnectionString, topicName);
         });
 
@@ -51,8 +51,8 @@ namespace AzureFunctions.ServiceBusMiddleware
         */
 
 
-        [FunctionName("HttpTrigger_TopicWriterWithProperties")]        
-        public static async Task<IActionResult> Run(
+        [FunctionName(nameof(TopicWriterWithPropertiesByHttpTrigger))]        
+        public static async Task<IActionResult> Run(            
            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
            TraceWriter log)
         {

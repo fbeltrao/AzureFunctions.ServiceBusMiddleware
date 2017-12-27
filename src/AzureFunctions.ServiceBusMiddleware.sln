@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27205.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctions.ServiceBusMiddleware", "AzureFunctions.ServiceBusMiddleware\AzureFunctions.ServiceBusMiddleware.csproj", "{DA72DB8D-9C27-4A1B-96CD-3C4E2509C7C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureFunctions.ServiceBusMiddleware", "AzureFunctions.ServiceBusMiddleware\AzureFunctions.ServiceBusMiddleware.csproj", "{DA72DB8D-9C27-4A1B-96CD-3C4E2509C7C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctions.ServiceBusMiddleware.Tests", "AzureFunctions.ServiceBusMiddleware.Tests\AzureFunctions.ServiceBusMiddleware.Tests.csproj", "{E4029288-65A8-48EE-9102-2E2EA4121F13}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureFunctions.ServiceBusMiddleware.Tests", "AzureFunctions.ServiceBusMiddleware.Tests\AzureFunctions.ServiceBusMiddleware.Tests.csproj", "{E4029288-65A8-48EE-9102-2E2EA4121F13}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctions.Common", "AzureFunctions.Common\AzureFunctions.Common.csproj", "{99215566-28F9-4199-8CB8-5F9961076CB5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureFunctions.Common", "AzureFunctions.Common\AzureFunctions.Common.csproj", "{99215566-28F9-4199-8CB8-5F9961076CB5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureFunctions.Tests.Common", "AzureFunctions.Tests.Common\AzureFunctions.Tests.Common.csproj", "{AFE76311-0DAF-4F59-B7B9-72A042317B86}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzureFunctions.Tests.Common", "AzureFunctions.Tests.Common\AzureFunctions.Tests.Common.csproj", "{AFE76311-0DAF-4F59-B7B9-72A042317B86}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
