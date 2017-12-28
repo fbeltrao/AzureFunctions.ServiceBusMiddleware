@@ -75,7 +75,7 @@ namespace AzureFunctions.ServiceBusMiddleware.Functions
         /// <param name="log"></param>
         /// <param name="topicClient"></param>
         /// <returns></returns>
-        public async Task<IActionResult> RunManual(HttpRequest req, ILogger log, ITopicClient topicClient)
+        public async Task<IActionResult> RunManual(HttpRequest req, TraceWriter log, ITopicClient topicClient)
         {
             if (topicClient == null)
             {
@@ -110,17 +110,17 @@ namespace AzureFunctions.ServiceBusMiddleware.Functions
                 outputMessages.Add(message);
             }
 
-            log.LogInformation($"Created {outputMessages.Count} messages to send to topic {topicClient.TopicName}");
+            log.Info($"Created {outputMessages.Count} messages to send to topic {topicClient.TopicName}");
 
             try
             {
                 await topicClient.SendAsync(outputMessages);
-                log.LogInformation($"Sent {outputMessages.Count} messages to topic {topicClient.TopicName}");
+                log.Info($"Sent {outputMessages.Count} messages to topic {topicClient.TopicName}");
 
             }
             catch (Exception sendException)
             {
-                log.LogError(sendException, "Error sending message to Service Bus Topic");
+                log.Error("Error sending message to Service Bus Topic", sendException);
                 return new BadRequestObjectResult("Error sending message to topic");
             }
 

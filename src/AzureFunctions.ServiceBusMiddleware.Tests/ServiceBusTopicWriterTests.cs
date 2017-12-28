@@ -15,11 +15,11 @@ namespace AzureFunctions.ServiceBusMiddleware.Tests
 {
     public class ServiceBusTopicWriterTests : AzureFunctionTest
     {
-        private ILogger log;
+        private TraceWriter log;
 
         public ServiceBusTopicWriterTests()
         {
-            log = new Mock<ILogger>().Object;
+            log = CreateTraceWriter();
         }
 
         [Fact]

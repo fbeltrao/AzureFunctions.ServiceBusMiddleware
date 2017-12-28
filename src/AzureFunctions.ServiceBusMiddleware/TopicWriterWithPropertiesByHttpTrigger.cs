@@ -54,7 +54,7 @@ namespace AzureFunctions.ServiceBusMiddleware
         [FunctionName(nameof(TopicWriterWithPropertiesByHttpTrigger))]        
         public static async Task<IActionResult> Run(            
            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
-           ILogger log)
+           TraceWriter log)
         {
             var func = new Functions.ServiceBusTopicWriter()
             {
