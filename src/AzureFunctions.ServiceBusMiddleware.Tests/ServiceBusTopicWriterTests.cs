@@ -15,11 +15,11 @@ namespace AzureFunctions.ServiceBusMiddleware.Tests
 {
     public class ServiceBusTopicWriterTests : AzureFunctionTest
     {
-        private TraceWriter traceWriter;
+        private ILogger log;
 
         public ServiceBusTopicWriterTests()
         {
-            traceWriter = CreateTraceWriter();
+            log = new Mock<ILogger>().Object;
         }
 
         [Fact]
@@ -27,7 +27,7 @@ namespace AzureFunctions.ServiceBusMiddleware.Tests
         {
             var target = new ServiceBusTopicWriter()
             {
-                Properties = new TopicMessageCustomProperty[0]
+                UserProperties = new TopicMessageUserProperty[0]
             };
 
             var topicClient = new Mock<ITopicClient>();
@@ -37,7 +37,7 @@ namespace AzureFunctions.ServiceBusMiddleware.Tests
 
             var actual = await target.RunManual(
                 CreateJsonRequest(@"[{},{}]")
-                , traceWriter
+                , log
                 , topicClient.Object);
 
             Assert.IsType<OkResult>(actual);
@@ -52,7 +52,7 @@ namespace AzureFunctions.ServiceBusMiddleware.Tests
 
             var actual = await target.RunManual(
                 CreateEmptyRequest(),
-                traceWriter,
+                log,
                 new Mock<ITopicClient>().Object);
 
             Assert.IsType<BadRequestObjectResult>(actual);
@@ -64,7 +64,7 @@ namespace AzureFunctions.ServiceBusMiddleware.Tests
         {
             var target = new ServiceBusTopicWriter()
             {
-                Properties = new TopicMessageCustomProperty[] { new TopicMessageCustomProperty("test") }
+                UserProperties = new TopicMessageUserProperty[] { new TopicMessageUserProperty("test") }
             };
             
 
@@ -75,7 +75,7 @@ namespace AzureFunctions.ServiceBusMiddleware.Tests
 
             var actual = await target.RunManual(
                 CreateJsonRequest("[{}, {}]")
-                , traceWriter
+                , log
                 , topicClient.Object);
 
             Assert.IsType<OkResult>(actual);
@@ -87,7 +87,7 @@ namespace AzureFunctions.ServiceBusMiddleware.Tests
         {
             var target = new ServiceBusTopicWriter()
             {
-                Properties = new TopicMessageCustomProperty[] { new TopicMessageCustomProperty("test") }
+                UserProperties = new TopicMessageUserProperty[] { new TopicMessageUserProperty("test") }
             };
             
             var topicClient = new Mock<ITopicClient>();
@@ -97,7 +97,7 @@ namespace AzureFunctions.ServiceBusMiddleware.Tests
 
             var actual = await target.RunManual(
                 CreateJsonRequest(new[] { new { test = "value1" }, new { test = "value2" } })
-                , traceWriter
+                , log
                 , topicClient.Object);
 
             Assert.IsType<OkResult>(actual);

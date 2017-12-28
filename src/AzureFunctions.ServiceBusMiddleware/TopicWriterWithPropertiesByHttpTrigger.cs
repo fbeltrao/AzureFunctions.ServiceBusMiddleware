@@ -19,9 +19,9 @@ namespace AzureFunctions.ServiceBusMiddleware
     /// </summary>
     public static class TopicWriterWithPropertiesByHttpTrigger
     {
-        static Lazy<IList<Functions.TopicMessageCustomProperty>> TopicMessageCustomProperties = new Lazy<IList<Functions.TopicMessageCustomProperty>>(() =>
+        static Lazy<IList<Functions.TopicMessageUserProperty>> TopicMessageCustomProperties = new Lazy<IList<Functions.TopicMessageUserProperty>>(() =>
         {
-            return Functions.TopicMessageCustomProperty.Parse(Environment.GetEnvironmentVariable($"{nameof(TopicWriterWithPropertiesByHttpTrigger)}_Properties"));
+            return Functions.TopicMessageUserProperty.Parse(Environment.GetEnvironmentVariable($"{nameof(TopicWriterWithPropertiesByHttpTrigger)}_Properties"));
         });
 
 
@@ -54,11 +54,11 @@ namespace AzureFunctions.ServiceBusMiddleware
         [FunctionName(nameof(TopicWriterWithPropertiesByHttpTrigger))]        
         public static async Task<IActionResult> Run(            
            [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
-           TraceWriter log)
+           ILogger log)
         {
             var func = new Functions.ServiceBusTopicWriter()
             {
-                Properties = TopicMessageCustomProperties.Value
+                UserProperties = TopicMessageCustomProperties.Value
             };
 
             return await func.RunManual(req, log, TopicClient.Value);

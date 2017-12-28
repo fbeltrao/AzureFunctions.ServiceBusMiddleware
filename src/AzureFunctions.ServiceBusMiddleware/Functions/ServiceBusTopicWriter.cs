@@ -14,16 +14,28 @@ using System.Threading.Tasks;
 
 namespace AzureFunctions.ServiceBusMiddleware.Functions
 {
+    /// <summary>
+    /// Service bus topic writer
+    /// </summary>
     public class ServiceBusTopicWriter
     {
-        public IList<TopicMessageCustomProperty> Properties { get; set; }
+        /// <summary>
+        /// List of properties that will be saves as user properties
+        /// </summary>
+        public IList<TopicMessageUserProperty> UserProperties { get; set; }
 
-
-        public async Task<IActionResult> Run(HttpRequest req, TraceWriter log, IAsyncCollector<Message> outputMessages)
+        /// <summary>
+        /// Runs returning the topic messages in parameter <paramref name="outputMessages"/>
+        /// </summary>
+        /// <param name="req"></param>
+        /// <param name="log"></param>
+        /// <param name="outputMessages"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> Run(HttpRequest req, ILogger log, IAsyncCollector<Message> outputMessages)
         {
-            if (this.Properties == null)
+            if (this.UserProperties == null)
             {
-                return new BadRequestObjectResult(new { error = $"{nameof(Properties)} was not defined" });
+                return new BadRequestObjectResult(new { error = $"{nameof(UserProperties)} was not defined" });
             }
 
             // Stream analytics will send an json array of elements
@@ -39,7 +51,7 @@ namespace AzureFunctions.ServiceBusMiddleware.Functions
             foreach (var element in data)
             {
                 var message = new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(element)));
-                foreach (var prop in this.Properties)
+                foreach (var prop in this.UserProperties)
                 {
                     var propValue = element[prop.SourcePropertyName];
                     if (propValue != null)
@@ -50,22 +62,29 @@ namespace AzureFunctions.ServiceBusMiddleware.Functions
                 messageCount++;
             }
 
-            log.Info($"Created {messageCount} messages to send to topic");
+            log.LogInformation($"Created {messageCount} messages to send to topic");
 
             return new OkResult();
         }
 
 
-        public async Task<IActionResult> RunManual(HttpRequest req, TraceWriter log, ITopicClient topicClient)
+        /// <summary>
+        /// Run an sends the messages through a <see cref="ITopicClient"/>
+        /// </summary>
+        /// <param name="req"></param>
+        /// <param name="log"></param>
+        /// <param name="topicClient"></param>
+        /// <returns></returns>
+        public async Task<IActionResult> RunManual(HttpRequest req, ILogger log, ITopicClient topicClient)
         {
             if (topicClient == null)
             {
                 return new BadRequestObjectResult(new { error = $"{nameof(topicClient)} was not defined" });
             }
 
-            if (this.Properties == null)
+            if (this.UserProperties == null)
             {
-                return new BadRequestObjectResult(new { error = $"{nameof(Properties)} was not defined" });
+                return new BadRequestObjectResult(new { error = $"{nameof(UserProperties)} was not defined" });
             }
             
             // Stream analytics will send an json array of elements
@@ -81,7 +100,7 @@ namespace AzureFunctions.ServiceBusMiddleware.Functions
             foreach (var element in data)
             {
                 var message = new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(element)));
-                foreach (var prop in this.Properties)
+                foreach (var prop in this.UserProperties)
                 {
                     var propValue = element[prop.SourcePropertyName];
                     if (propValue != null)
@@ -91,17 +110,17 @@ namespace AzureFunctions.ServiceBusMiddleware.Functions
                 outputMessages.Add(message);
             }
 
-            log.Info($"Created {outputMessages.Count} messages to send to topic {topicClient.TopicName}");
+            log.LogInformation($"Created {outputMessages.Count} messages to send to topic {topicClient.TopicName}");
 
             try
             {
                 await topicClient.SendAsync(outputMessages);
-                log.Info($"Sent {outputMessages.Count} messages to topic {topicClient.TopicName}");
+                log.LogInformation($"Sent {outputMessages.Count} messages to topic {topicClient.TopicName}");
 
             }
             catch (Exception sendException)
             {
-                log.Error("Error sending message to Service Bus Topic", sendException);
+                log.LogError(sendException, "Error sending message to Service Bus Topic");
                 return new BadRequestObjectResult("Error sending message to topic");
             }
 
